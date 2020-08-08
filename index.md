@@ -40,7 +40,7 @@ var image = document.getElementById('output');
       if (json.error) {
         document.getElementById("mobilenet_imagenet").innerHTML = json.error;
       } else {
-        document.getElementById("mobilenet_imagenet").innerHTML = json.predicted[2];
+        document.getElementById("mobilenet_imagenet").innerHTML = json.predicted[0];
       }  
    });
 
