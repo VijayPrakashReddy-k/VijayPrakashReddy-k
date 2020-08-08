@@ -23,7 +23,7 @@
 	</table>
   <script>
   var loadFile = function(event) {
-	window.alert("Image")
+	window.alert("Image");
 	var image = document.getElementById('output');
   const files = event.target.files
 	
