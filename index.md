@@ -1,12 +1,4 @@
-### Assignment-1: Deploying pretrained MobileNet V2 network over AWS using serverless open source framework
-<ol>
-<li>Pretrained MobileNet V2 model is deployed on AWS s3 bucket</li>
-<li>Serverless open source framework is used to build and run application on AWS.</li>
-<li>Serverless framwork manages all the resources in AWS and user need to just focus on their Application and problem solving.</li>
-<li>All the AWS resources such as API end point, Lambda functions, Cloud Formations, application packages on S3 and many mores resources are created automatically.</li>
-<li>It's very cool as it takes all the burden of managing AWS resources from the user.</li>
-<li>Application is deploy as AWS Lambda function which fetch model from S3 bucket.</li>
-</ol>
+
 <table>
      <tr>
         <td>
