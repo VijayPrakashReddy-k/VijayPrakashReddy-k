@@ -26,7 +26,7 @@ var image = document.getElementById('output');
   const files = event.target.files
 
   const formData = new FormData ();
-  formData.append ("data", files[0]);
+  formData.append ("data", files);
   console.log (formData);
  
   document.getElementById("mobilenet_imagenet").innerHTML = "Fetching results....."
