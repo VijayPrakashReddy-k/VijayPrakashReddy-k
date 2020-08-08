@@ -6,6 +6,7 @@
 <li>All the AWS resources such as API end point, Lambda functions, Cloud Formations, application packages on S3 and many mores resources are created automatically.</li>
 <li>It's very cool as it takes all the burden of managing AWS resources from the user.</li>
 <li>Application is deploy as AWS Lambda function which fetch model from S3 bucket.</li>
+</ol>
 <table>
      <tr>
         <td>
@@ -13,8 +14,10 @@
           <img id="output" width="300" />
         </td>
  	<td>
+		<ul>
   	      <li>Due to cold start of Lambda, first time is to start the Lambda and give a second try after 90 seconds</li
         	<li id="mobilenet_imagenet">MobileNet V2 (ImageNet 1000 Classes)</li>
+		</ul>
 	     </td>
 	</tr>
 	</table>
