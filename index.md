@@ -23,11 +23,10 @@
 	</table>
   <script>
   var loadFile = function(event) {
+	window.alert("Image")
 	var image = document.getElementById('output');
   const files = event.target.files
 	
-  image.src = URL.createObjectURL(files[0]);
-  
   const formData = new FormData ();
   formData.append ("data", files[0]);
   console.log (formData);
