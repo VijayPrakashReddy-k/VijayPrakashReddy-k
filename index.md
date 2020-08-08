@@ -26,7 +26,7 @@ var image = document.getElementById('output');
   const files = event.target.files
 
   const formData = new FormData ();
-  formData.append ("data", files);
+  formData.append ("data", files[0]);
   console.log (formData);
  
   document.getElementById("mobilenet_imagenet").innerHTML = "Fetching results....."
@@ -40,7 +40,7 @@ var image = document.getElementById('output');
       if (json.error) {
         document.getElementById("mobilenet_imagenet").innerHTML = json.error;
       } else {
-      document.getElementById("mobilenet_imagenet").innerHTML = "<p>${json.predicted}</p>;
+      document.getElementById("mobilenet_imagenet").innerHTML = json.predicted</p>;
       }  
    });
 
