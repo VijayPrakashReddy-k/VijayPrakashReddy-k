@@ -10,19 +10,19 @@
 <table>
      <tr>
         <td>
-          <input type="file" id="imageUpload" onclick="loadFile(event)"/>
+          <input type="file" id="imageUpload" onchange="loadFile(event)"/>
           <img id="output" width="300" />
         </td>
  	<td>
 		<ul>
-  	      <li>Due to cold start of Lambda, first time is to start the Lambda and give a second try after 90 seconds</li
+  	      <li>Due to cold start of Lambda, first time is to start the Lambda and give a second try after 90 seconds</li>
         	<li id="mobilenet_imagenet">MobileNet V2 (ImageNet 1000 Classes)</li>
 		</ul>
 	     </td>
 	</tr>
-	</table>
+</table>
 <script>
-  var loadFile = function(event) {
+  function loadfile(event) {
 	window.alert("Image");
 	var image = document.getElementById('output');
   const files = event.target.files
