@@ -15,7 +15,7 @@
         </td>
   <td>
        <li>Due to cold start of Lambda, first time is to start the Lambda and give a second try after 90 seconds</li>
-        <li id="mobilenet_imagenet">MobileNet V2 (ImageNet 1000 Classes)</li>
+        <li id="mobilenet_imagenet"></li>
     </td>
 </tr>
 </table>
