@@ -21,7 +21,6 @@
 </table>
 <script>
   document.getElementById('imageUpload').onchange = function (evt) {
-alert("Image");
 var image = document.getElementById('output');
   const files = event.target.files
 
@@ -40,7 +39,7 @@ var image = document.getElementById('output');
       if (json.error) {
         document.getElementById("mobilenet_imagenet").innerHTML = json.error;
       } else {
-          document.getElementById("mobilenet_imagenet").innerHTML = "<p>" + "MobileNet V2 predicted for the image out of (1000 Classes), prediction is : " + json.predicted + "</p>";
+          document.getElementById("mobilenet_imagenet").innerHTML = "<p>" + "MobileNet V2 predicted for the image out of Imagenet (1000 Classes), prediction is : " + json.predicted + "</p>";
       }  
    });
 
