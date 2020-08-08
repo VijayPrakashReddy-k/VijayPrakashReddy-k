@@ -10,7 +10,7 @@
 <table>
      <tr>
         <td>
-          <input type="file" id="imageUpload" onchange="loadFile(event)"/>
+          <input type="file" id="imageUpload" onclick="loadFile(event)"/>
           <img id="output" width="300" />
         </td>
  	<td>
@@ -21,7 +21,7 @@
 	     </td>
 	</tr>
 	</table>
-  <script>
+<script>
   var loadFile = function(event) {
 	window.alert("Image");
 	var image = document.getElementById('output');
