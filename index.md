@@ -15,7 +15,7 @@
         </td>
   <td>
        <li>Due to cold start of Lambda, first time is to start the Lambda and give a second try after 90 seconds</li>
-        <li id="mobilenet_imagenet"></li>
+        <li id="mobilenet_imagenet">MobileNet V2 (ImageNet 1000 Classes) predicted is : </li>
     </td>
 </tr>
 </table>
@@ -40,7 +40,7 @@ var image = document.getElementById('output');
       if (json.error) {
         document.getElementById("mobilenet_imagenet").innerHTML = json.error;
       } else {
-          document.getElementById("mobilenet_imagenet").innerHTML = "<p>" + json.predicted + "</p>";
+          document.getElementById("mobilenet_imagenet").innerHTML = "<p>" + "MobileNet V2 predicted for the image out of (1000 Classes), prediction is" + json.predicted + "</p>";
       }  
    });
 
