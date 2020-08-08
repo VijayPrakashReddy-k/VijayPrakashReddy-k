@@ -1,37 +1,45 @@
-## Welcome to GitHub Pages
+### Assignment-1: Deploying pretrained MobileNet V2 model over AWS using serverless open source framework
+<ol>
+<li>Pretrained MobileNet V2 model is deployed on AWS s3 bucket.
+<li>Serverless open source framework is used to build and run application on AWS.
+<li>Serverless framwork manages all the resources in AWS and user need to just focus on their Application and problem solving.
+<li>All the AWS resources such as API end point, Lambda functions, Cloud Formations, application packages on S3 and many mores resources are created automatically.
+<li>It's very cool as it takes all the burden of managing AWS resources from the user.
+<li>Application is deploy as AWS Lambda function which fetch model from S3 bucket.
+  
+<table>
+     <tr>
+        <td>
+          <input type="file" id="imageUpload" onchange="loadFile(event)"/>
+          <img id="output" width="300" />
+        </td>
+	</tr>
+	</table>
+  <script>
+  var loadFile = function(event) {
+	var image = document.getElementById('output');
+  const files = event.target.files
+	
+  image.src = URL.createObjectURL(files[0]);
+  document.getElementById("mobilenet_custom").innerHTML = "Fetching results....."
 
-You can use the [editor on GitHub](https://github.com/VijayPrakashReddy-k/VijayPrakashReddy-k/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+  const formData = new FormData ();
+  formData.append ("data", files[0]);
+  console.log (formData);
+   
+  fetch("https://tda3oz8ho9.execute-api.ap-south-1.amazonaws.com/dev/mobilenetV2-classify", {
+    method: "POST",
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(json => {
+    console.log (json);
+    if (json.error) {
+      document.getElementById("mobilenet_custom").innerHTML = json.error;
+    } else {
+      document.getElementById("mobilenet_custom").innerHTML = json.predicted[1];
+    }   
+   });
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/VijayPrakashReddy-k/VijayPrakashReddy-k/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+};
+</script>
