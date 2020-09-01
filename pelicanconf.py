@@ -5,7 +5,7 @@ from datetime import datetime
 AUTHOR = 'Vijayprakash'
 SITETITLE = 'Vijay Prakash'
 SITENAME = "Vijay Prakash"
-SITEURL = ''
+SITEURL = 'https://www.vijayprakashk.com/'
 
 PATH = 'content'
 
