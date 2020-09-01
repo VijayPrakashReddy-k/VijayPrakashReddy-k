@@ -13,7 +13,13 @@ from pelicanconf import *
 
 # If your site is available via HTTPS, make sure SITEURL begins with https://
 SITEURL = 'https://www.vijayprakashk.com/'
+DOMAIN = SITEURL
+FEED_DOMAIN = SITEURL
 RELATIVE_URLS = False
+# USE_LESS = False
+
+# Delete the output directory, before generating new files
+DELETE_OUTPUT_DIRECTORY = True
 
 GOOGLE_ANALYTICS = "UA-176931813-1"
 
