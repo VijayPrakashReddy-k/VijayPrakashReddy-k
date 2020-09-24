@@ -6,13 +6,13 @@
   -->
 <html lang="en">
     <head>
-        <title>Vijay Prakash - Articles by Vijayprakash</title>
+        <title>Deploying pretrained MobileNet V2 model over AWS using serverless open source framework for week 2</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <!--[if lte IE 8]><script src="../theme/assets/js/ie/html5shiv.js"></script><![endif]-->
-        <link rel="stylesheet" href="../theme/assets/css/main.css" />
-        <link rel="stylesheet" href="../theme/assets/css/pygment-default.css" />
-        <!--[if lte IE 8]><link rel="stylesheet" href="../theme/assets/css/ie8.css" /><![endif]-->
+        <!--[if lte IE 8]><script src="./theme/assets/js/ie/html5shiv.js"></script><![endif]-->
+        <link rel="stylesheet" href="./theme/assets/css/main.css" />
+        <link rel="stylesheet" href="./theme/assets/css/pygment-default.css" />
+        <!--[if lte IE 8]><link rel="stylesheet" href="./theme/assets/css/ie8.css" /><![endif]-->
 
     </head>
     <body>
@@ -20,15 +20,15 @@
         <!-- Content -->
         <div id="content">
             <div class="inner">
-<article id="deploying-pretrained-mobilenet-v2-model-over-aws-using-serverless-open-source-framework" class="box post post-excerpt">
+<article class="box post post-excerpt">
     <header>
-        <h2><a href="../deploying-pretrained-mobilenet-v2-model-over-aws-using-serverless-open-source-framework.html" rel="bookmark">Deploying pretrained MobileNet V2 model over AWS using serverless open source framework</a></h2>
+        <h2><a href="./deploying-pretrained-mobilenet-v2-model-over-aws-using-serverless-open-source-framework-for-week-2.html" rel="bookmark">Deploying pretrained MobileNet V2 model over AWS using serverless open source framework for week 2</a></h2>
         <address class="author">
-            By             <a href="../author/vijayprakash.html">Vijayprakash</a>
+            By             <a href="./author/vijayprakash.html">Vijayprakash</a>
         </address>
         <div>
-           <i class="fa fa-folder"></i>&nbsp;<a class="folder" href="../category/eva.html">EVA</a>
-<i class="fa fa-tags"></i>&nbsp;<span class="tag"><a href="../tag/mobilenet-v2.html">mobilenet v2</a></span> <span class="tag"><a href="../tag/week1.html">week1</a></span>         </div>
+           <i class="fa fa-folder"></i>&nbsp;<a class="folder" href="./category/articles.html">articles</a>
+        </div>
     </header>
     <div class="info">
         <!--
@@ -38,30 +38,63 @@
             Oh, and if you don't need a date for a particular page or post you can simply delete
             the entire "date" element.
           -->
-        <time class="published" datetime="2020-07-25T00:00:00+05:30">
-            <span class="date"><span class="month">Jul</span> <span class="day">25</span><span class="year"><span>, </span>2020</span></span>
+        <time class="published" datetime="2020-07-30T00:00:00+05:30">
+            <span class="date"><span class="month">Jul</span> <span class="day">30</span><span class="year"><span>, </span>2020</span></span>
         </time>
         <ul class="stats">
-            <li><a href="../deploying-pretrained-mobilenet-v2-model-over-aws-using-serverless-open-source-framework.html#disqus_thread" class="icon fa-comment">0</a></li>
+            <li><a href="./deploying-pretrained-mobilenet-v2-model-over-aws-using-serverless-open-source-framework-for-week-2.html#disqus_thread" class="icon fa-comment">0</a></li>
             <!--
             <li><a href="#" class="icon fa-heart">32</a></li>
             <li><a href="#" class="icon fa-twitter">64</a></li>
             <li><a href="#" class="icon fa-facebook">128</a></li>
             -->
         </ul>
-    </div>    <p align = 'center'>
-    <img src = "images/mobilenet_v2.png" alt="mobilenet v2" />
-</p>
+    </div>
+    <ul>
+<li>Pretrained MobileNet V2 model is deployed on AWS s3 bucket</li>
+<li>Serverless open source framework is used to build and run application on AWS.</li>
+<li>Serverless framwork manages all the resources in AWS and user need to just focus on their Application and problem solving.</li></li>
+<li>All the AWS resources such as API end point, Lambda functions, Cloud Formations, application packages on S3 and many mores resources are created automatically.</li>
+<li>It's very cool as it takes all the burden of managing AWS resources from the user.</li>
+<li>Application is deploy as AWS Lambda function which fetch model from S3 bucket.</li>
+</ul>
+<section>
+    <div class="row gtr-uniform">
+      <div class="col-3 col-12-xsmall">
+        <ul class="actions">
+          <li><input id="getFile" type="file" accept="image/jpg"/></li>
+        </ul>
+        <ul class="actions">
+          <li><input id="classifyImage1" type="button" value="Classify"/></li>
+        </ul>
+      </div>
+      <div class="col-6 col-12-xsmall">
+        <span class="image fit">
+          <img id="upImage" src="#" alt="">
+        </span>
+        <h3 id="imgClass" style="text-align:center" ></h3>
+      </div>
+    </div>
+ </section>
 
-<p><code>Deploying pretrained mobilnet V2 model on Imagenet, using serverless open source framework to build and run application on AWS Lambda and fetch model from s3 bucket.</code><br>
-<code>Serverless framwork manages all the resources in AWS and user need to just focus on the Application and problem solving.All the AWS resocures such as</code> <strong>API end point, Lambda functions, Cloud Formations, application packages on S3</strong>  <code>and many mores resources are created automatically …</code></p>
-
-    <div><a href="../deploying-pretrained-mobilenet-v2-model-over-aws-using-serverless-open-source-framework.html">Read more</a></div>
+        <h3>Comments</h3>
+        <div id="disqus_thread"></div>
+        <script>
+            var disqus_config = function () {
+              this.page.url = './deploying-pretrained-mobilenet-v2-model-over-aws-using-serverless-open-source-framework-for-week-2.html';
+              this.page.identifier = 'deploying-pretrained-mobilenet-v2-model-over-aws-using-serverless-open-source-framework-for-week-2.html';
+            };
+            (function() {
+              var d = document, s = d.createElement('script');
+              s.src = '//extensive-vision-ai.disqus.com/embed.js';
+              s.setAttribute('data-timestamp', +new Date());
+              s.async = true;
+              (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <script id="dsq-count-scr" src="//extensive-vision-ai.disqus.com/count.js" async></script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </article>
-
-<script id="dsq-count-scr" src="//extensive-vision-ai.disqus.com/count.js" async></script>
-
-
             </div>
         </div>
 
@@ -71,13 +104,13 @@
             <!-- Avatar -->
 
             <!-- Logo -->
-            <h1 id="logo"><img id="avatar" alt="Avatar" src="https://user-images.githubusercontent.com/42317258/91530727-3c21cb00-e929-11ea-9691-21088dd85801.png"/><a href="../">VIJAY PRAKASH</a></h1>
+            <h1 id="logo"><img id="avatar" alt="Avatar" src="https://user-images.githubusercontent.com/42317258/91530727-3c21cb00-e929-11ea-9691-21088dd85801.png"/><a href="./">VIJAY PRAKASH</a></h1>
 
             <!-- Nav -->
             <nav id="nav">
                 <ul>
-                    <li><a href="../category/eva.html">EVA</a></li>
-                    <li><a href="../pages/about.html">About</a></li>
+                    <li class="current"><a href="./category/articles.html">articles</a></li>
+                    <li><a href="./pages/about.html">About</a></li>
                 </ul>
             </nav>
 
@@ -95,8 +128,6 @@
                     <header>
                         <h2>Tags:</h2>
                     </header>
-                        <a class="tag-4" href="../tag/week1.html">week1</a>
-                        <a class="tag-4" href="../tag/mobilenet-v2.html">mobilenet v2</a>
                 </div>
             </section>
 
@@ -203,7 +234,6 @@
                 </header>
                 <ul>
                     <li><a href="https://theschoolof.ai/">The School of AI</a></li>
-                    <li><a href="https://github.com/VijayPrakashReddy-k/Extensive-Vision-AI/tree/master/Phase%202">Code reference</a></li>
                 </ul>
             </section>
 
@@ -214,9 +244,9 @@
                 </header>
                 <ul>
 
-                    <li><i class="fa fa-github-square"></i> <a href="https://github.com/VijayPrakashReddy-k">github</a></li>
+                    <li><i class="fa fa-github-square"></i> <a href="https://github.com/VijayPrakashReddy-k/Extensive-Vision-AI/tree/master/Phase%202">github</a></li>
                     <li><i class="fa fa-twitter-square"></i> <a href="https://twitter.com/K_VijayPrakash">twitter</a></li>
-                    <li><i class="fa fa-linkedin-square"></i> <a href="https://www.linkedin.com/in/vijayprakash-reddy-kovuru-ab3740166/">linkedin</a></li>
+                    <li><i class="fa fa-linkdin-square"></i> <a href="https://www.linkedin.com/in/vijayprakash-reddy-kovuru-ab3740166/">linkdin</a></li>
                 </ul>
             </section>
 
@@ -230,14 +260,34 @@
         </div>
 
         <!-- Scripts -->
-        <script src="../theme/assets/js/jquery.min.js"></script>
-        <script src="../theme/assets/js/skel.min.js"></script>
-        <script src="../theme/assets/js/util.js"></script>
-        <!--[if lte IE 8]><script src="../theme/assets/js/ie/respond.min.js"></script><![endif]-->
-        <script src="../theme/assets/js/main.js"></script>
+        <script src="./theme/assets/js/jquery.min.js"></script>
+        <script src="./theme/assets/js/skel.min.js"></script>
+        <script src="./theme/assets/js/util.js"></script>
+        <!--[if lte IE 8]><script src="./theme/assets/js/ie/respond.min.js"></script><![endif]-->
+        <script src="./theme/assets/js/main.js"></script>
 <script>
-$(function () {
-    $("article img:first-child").addClass("featured");
+$("article img").each(function() {
+  $(this).load(function() {
+    var imgWidth = $(this).width();
+    var imgHeight = $(this).height();
+    if (imgHeight > imgWidth) {
+      $(this).css({
+        "width": "60%",
+        "margin": "0 auto"
+      });
+    }
+    var imageCaption = $(this).attr("alt");
+    if (imageCaption != '') {
+      // display image caption on top of image
+      imgWidth = imgWidth - 5;
+      var positionTop = imgHeight - 26;
+      $("<span class='img-caption'>" + imageCaption + "</span>").css({
+          "top": positionTop + "px",
+          "width": imgWidth + "px"
+      }).insertAfter(this);
+    }
+  });
+  if (this.complete) $(this).trigger("load");
 });
 </script>
     </body>
