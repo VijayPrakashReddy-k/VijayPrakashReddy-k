@@ -58,24 +58,66 @@
 
 <p><code>Deploying pretrained mobilnet V2 model on Imagenet, using serverless open source framework to build and run application on AWS Lambda and fetch model from s3 bucket.</code><br>
 <code>Serverless framwork manages all the resources in AWS and user need to just focus on the Application and problem solving.All the AWS resocures such as</code> <strong>API end point, Lambda functions, Cloud Formations, application packages on S3</strong>  <code>and many mores resources are created automatically.</code></p>
-<section>
-    <div class="row gtr-uniform">
+<div class="row gtr-uniform">
       <div class="col-3 col-12-xsmall">
         <ul class="actions">
-          <li><input id="getFile" type="file" accept="image/jpg"/></li>
+          <li><input type="file" id="imageUpload"></li>
         </ul>
         <ul class="actions">
-          <li><input id="classifyImage1" type="button" value="Classify"/></li>
+          <li><input type="button" style="margin-top: 15px;" id="button" value="classify"></li>
         </ul>
       </div>
-      <div class="col-6 col-12-xsmall">
+      <div class="col-9">
         <span class="image fit">
-          <img id="upImage" src="#" alt="">
-        </span>
-        <h3 id="imgClass" style="text-align:center" ></h3>
-      </div>
+          <img id="output" height="300px">
+    </span>
     </div>
- </section>
+</div>
+
+<p><i>"Due to cold start of Lambda, if it's taking more than a minute for first run, give a second try after 90 seconds by changing image"<i></p>
+
+<div style="text-align:center;margin-top: 25px;">
+
+    <h3 id="mobilenet_imagenet">MobileNet V2 (ImageNet 1000 Classes)</h3>
+</div>
+
+<script>
+var files;
+
+document.getElementById('imageUpload').onchange = function (evt) {
+    files = event.target.files;
+    var reader = new FileReader();
+    reader.onload = function(){
+      var dataURL = reader.result;
+      var output = document.getElementById('output');
+      output.src = dataURL;
+    };
+    reader.readAsDataURL(files[0]);
+
+}
+
+  document.getElementById('button').onclick = function (evt) {
+
+  const formData = new FormData ();
+  formData.append ("data", files[0]);
+  console.log (files[0]);
+  document.getElementById("mobilenet_imagenet").innerHTML = "Fetching results..."
+  fetch("https://tda3oz8ho9.execute-api.ap-south-1.amazonaws.com/dev/mobilenetV2-classify", {
+    method: "POST",
+    body: formData,
+  })
+.then(response => response.json())
+.then(json => {
+ console.log (json);
+      if (json.error) {
+        document.getElementById("mobilenet_imagenet").innerHTML = "<h3>" + "Class Not Found" + "</h3>";
+      } else {
+        document.getElementById("mobilenet_imagenet").innerHTML = "<h3 id='imgClass' style='text-align:center'> " + json.predicted +"</h3>";
+      }
+   });
+
+};
+</script>
 
 <p><strong>Context:</strong></p>
 <p><em><code>It's a Series of learning on Training models for less configurable devices like Mobiles, Embedded Systems (Jetson Nano, Rasberry pi, Neural computing stick) with less number of parameters without compromising the Accuracy.Here, in the first article mainly focusing on setting up environment and deploying into AWS.</code></em></p>
@@ -173,7 +215,10 @@
 <ul>
 <li>Update handler function in handler.py</li>
 </ul>
-<div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Code to download pre-trained pytorch model.</span>
+<span class="sd">Download the pre-trained model and convert into trace model</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">unzip_requirements</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
@@ -188,27 +233,28 @@
 
 <span class="kn">import</span> <span class="nn">boto3</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">tarfile</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>  
 <span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">base64</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Import End&quot;</span><span class="p">)</span>
 
 <span class="c1"># define environmental variables if there are not existing</span>
-<span class="n">S3_BUCKET</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;S3_BUCKET&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;S3_BUCKET&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span> <span class="k">else</span> <span class="s1">&#39;S3 bucket-name&#39;</span>
+<span class="n">S3_BUCKET</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;S3_BUCKET&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;S3_BUCKET&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span> <span class="k">else</span> <span class="s1">&#39;name-of-the-bucket&#39;</span>
 <span class="n">MODEL_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MODEL_PATH&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;MODEL_PATH&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span> <span class="k">else</span> <span class="s1">&#39;mobilenet_v2.pt&#39;</span>
+<span class="n">json_data</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;json_data&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;json_data&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span> <span class="k">else</span> <span class="s1">&#39;imagenet1000_clsidx_to_labels.json&#39;</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Downloading the model:&quot;</span><span class="p">)</span>
 
-<span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+<span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">MODEL_PATH</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">:</span>
         <span class="c1">#get object from s3</span>
-        <span class="n">obj</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="n">S3_BUCKET</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">MODEL_PATH</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">Bucket</span><span class="p">(</span><span class="n">S3_BUCKET</span><span class="p">)</span><span class="o">.</span><span class="n">Object</span><span class="p">(</span><span class="n">MODEL_PATH</span><span class="p">)</span>
         <span class="c1"># read it in memory</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;creating Bytestream&quot;</span><span class="p">)</span>
-        <span class="n">bytestream</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;Body&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">bytestream</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">()[</span><span class="s1">&#39;Body&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading Model&quot;</span><span class="p">)</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">bytestream</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Model loaded&quot;</span><span class="p">)</span>
@@ -239,6 +285,32 @@
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
         <span class="k">raise</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">imagenet1000_classidx_to_label</span><span class="p">(</span><span class="n">class_idx</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Convert class index to class labels, Imagenet.</span>
+<span class="sd">    Converting predicted class index to class labels, Imagenet.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        class_idx: str, predicted class index.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict mapping keys to the corresponding table row data</span>
+<span class="sd">        fetched. Each row is represented as a tuple of strings.</span>
+<span class="sd">        Returned keys are always bytes.  If a key from the keys argument is</span>
+<span class="sd">        missing from the dictionary, then that row was not found in the</span>
+<span class="sd">        table (and require_all_keys must have been False).</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        Exception: An error occurred accessing the json file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1">#content_object = s3.Object(S3_BUCKET,json_data)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Entered into Class prediction level&#39;</span><span class="p">)</span>
+        <span class="n">content_object</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">Bucket</span><span class="p">(</span><span class="n">S3_BUCKET</span><span class="p">)</span><span class="o">.</span><span class="n">Object</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span>
+        <span class="n">file_content</span> <span class="o">=</span> <span class="n">content_object</span><span class="o">.</span><span class="n">get</span><span class="p">()[</span><span class="s1">&#39;Body&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">json_content</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">file_content</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">json_content</span><span class="p">[</span><span class="n">class_idx</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">,</span><span class="nb">repr</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s2">&quot;Class Not Found&quot;</span>
 
 <span class="k">def</span> <span class="nf">get_prediction</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">):</span>
 
@@ -275,6 +347,8 @@
         <span class="n">prediction</span> <span class="o">=</span> <span class="n">get_prediction</span><span class="p">(</span><span class="n">image_bytes</span><span class="o">=</span><span class="n">picture</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
 
+        <span class="n">prediction_label</span> <span class="o">=</span> <span class="n">imagenet1000_classidx_to_label</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">prediction</span><span class="p">))</span>
+
         <span class="n">filename</span> <span class="o">=</span> <span class="n">picture</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">picture</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
@@ -286,7 +360,7 @@
                 <span class="s1">&#39;Access-Control-Allow-Origin&#39;</span><span class="p">:</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span>
                 <span class="s2">&quot;Access-Control-Allow-Credentials&quot;</span><span class="p">:</span> <span class="kc">True</span>
                 <span class="p">},</span>
-            <span class="s2">&quot;body&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span><span class="s1">&#39;predicted&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prediction</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">})</span>
+            <span class="s2">&quot;body&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span><span class="s1">&#39;predicted&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prediction</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">prediction_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">})</span>
     <span class="p">}</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
@@ -302,13 +376,13 @@
 </pre></div>
 
 
-<p><code>The above codeblock define as the entry handler function for Lambda. It contains application specific code. Following functions are implemented in this file:</code></p>
-<p>1.S3 bucket and path for model file in S3</p>
-<p>2.Loading of model from S3 bucket</p>
-<p>3.Entry handler functions which will be invoke every time AWS Lanbda function is triggered.</p>
-<p>4.Processing of incoming image content and using model for image's classification</p>
+<p><em>The above codeblock define as the entry handler function for Lambda. It contains application specific code. Following functions are implemented in this file:</em></p>
+<p><code>1. S3 bucket and path for model file in S3.</code></p>
+<p><code>2. Loading of the model and JSON from S3 bucket.</code></p>
+<p><code>3. Entry handler functions which will be invoke every time AWS Lanbda function is triggered.</code></p>
+<p><code>4. Processing of incoming image content and using model for image's classification.</code></p>
 <ul>
-<li>Update configurations in serverless.yml</li>
+<li><em>Update configurations in serverless.yml</em></li>
 </ul>
 <div class="highlight"><pre><span></span><span class="n">service</span><span class="o">:</span> <span class="n">mobilenet</span><span class="o">-</span><span class="n">v2</span>
 
@@ -381,7 +455,7 @@
 
 
 <p align = 'center'>
-    <img src = "images/deploy.png" alt="Deployment" />
+    <img src = "images/output.png" alt="Deployment" />
 </p>
 
 <p><em><code>After running deployment command, it will check the size of zip files if the size is less than 250 mb then it will generated API end point and it creates all the necessary AWS resources for running the application. Restful API end point is created on AWS API gateway.</code></em></p>
