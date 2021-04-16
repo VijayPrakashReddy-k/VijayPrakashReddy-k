@@ -1,0 +1,748 @@
+<!DOCTYPE HTML>
+<!--
+    Striped by HTML5 UP
+    html5up.net | @n33co
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+  -->
+<html lang="en">
+    <head>
+        <title>Monocular Human Pose Estimation,ONNX Models and Quantization</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!--[if lte IE 8]><script src="./theme/assets/js/ie/html5shiv.js"></script><![endif]-->
+        <link rel="stylesheet" href="./theme/assets/css/main.css" />
+        <link rel="stylesheet" href="./theme/assets/css/pygment-default.css" />
+        <!--[if lte IE 8]><link rel="stylesheet" href="./theme/assets/css/ie8.css" /><![endif]-->
+
+<meta name="tags" content="HPE" />
+<meta name="tags" content="ONNX" />
+<meta name="tags" content="Quantization" />
+    </head>
+    <body>
+
+        <!-- Content -->
+        <div id="content">
+            <div class="inner">
+<article class="box post post-excerpt">
+    <header>
+        <h2><a href="./monocular-human-pose-estimationonnx-models-and-quantization.html" rel="bookmark">Monocular Human Pose Estimation,ONNX Models and Quantization</a></h2>
+        <address class="author">
+            By             <a href="./author/vijayprakash.html">Vijayprakash</a>
+        </address>
+        <div>
+           <i class="fa fa-folder"></i>&nbsp;<a class="folder" href="./category/eva.html">EVA</a>
+<i class="fa fa-tags"></i>&nbsp;<span class="tag"><a href="./tag/hpe.html">HPE</a></span> <span class="tag"><a href="./tag/onnx.html">ONNX</a></span> <span class="tag"><a href="./tag/quantization.html">Quantization</a></span>         </div>
+    </header>
+    <div class="info">
+        <!--
+            Note: The date should be formatted exactly as it's shown below. In particular, the
+            "least significant" characters of the month should be encapsulated in a <span>
+            element to denote what gets dropped in 1200px mode (eg. the "uary" in "January").
+            Oh, and if you don't need a date for a particular page or post you can simply delete
+            the entire "date" element.
+          -->
+        <time class="published" datetime="2021-03-25T00:00:00+05:30">
+            <span class="date"><span class="month">Mar</span> <span class="day">25</span><span class="year"><span>, </span>2021</span></span>
+        </time>
+        <ul class="stats">
+            <!--
+            <li><a href="#" class="icon fa-heart">32</a></li>
+            <li><a href="#" class="icon fa-twitter">64</a></li>
+            <li><a href="#" class="icon fa-facebook">128</a></li>
+            -->
+        </ul>
+    </div>
+    <p align = 'center'>
+    <img src = "images/hpe.gif" alt="HPE Estimation" />
+</p>
+
+<h2 style="font-size:200%;"  align = 'center'> Human Pose Estimation </h2>
+
+<p><br>
+<code>Human Pose Estimation (HPE)— an image processing task which finds the configuration of a subject’s joints and body parts in an image.When tackling human pose estimation, we need to be able to detect a person in the image and estimate the configuration of his joins (or keypoints).</code></p>
+<ul>
+<li>
+<p><code>It represents the orientation of a person in a graphical format. Essentially, it is a set of coordinates that can be connected to describe the pose of the person. Each co-ordinate in the skeleton is known as a</code> <strong><code>part (or a joint, or a keypoint).</code></strong> <code>A valid connection between two parts is known as a</code> <strong><code>pair (or a limb).</code></strong></p>
+</li>
+<li>
+<p><code>Formally speaking, Pose Estimation is predicting the body part or joint positions of a person from an image or a video.</code></p>
+</li>
+</ul>
+<div class="row gtr-uniform">
+      <div class="col-3 col-12-xsmall">
+        <ul class="actions">
+          <li><input type="file" id="imageUpload"></li>
+        </ul>
+        <ul class="actions">
+          <li><input type="button" style="margin-top: 15px;" id="button" value="classify"></li>
+        </ul>
+      </div>
+      <div class="col-9">
+        <span class="image fit">
+          <img id="output" height="300px">
+    </span>
+    </div>
+</div>
+
+<p><i>"Due to cold start of Lambda, if it's taking more than a minute for first run, give a second try after 90 seconds by changing image"<i></p>
+
+<div style="text-align:center;margin-top: 25px;">
+
+    <h3 id="hpe_model">Human Pose Estimation</h3>
+</div>
+
+<script>
+var files;
+
+document.getElementById('imageUpload').onchange = function (evt) {
+    files = event.target.files;
+    var reader = new FileReader();
+    reader.onload = function(){
+      var dataURL = reader.result;
+      var output = document.getElementById('output');
+      output.src = dataURL;
+    };
+    reader.readAsDataURL(files[0]);
+
+}
+
+  document.getElementById('button').onclick = function (evt) {
+
+  const formData = new FormData ();
+  formData.append ("data", files[0]);
+  console.log (files[0]);
+  document.getElementById("hpe_model").innerHTML = "Fetching results..."
+  fetch("https://f22saolkw5.execute-api.ap-south-1.amazonaws.com/dev/mobilenetV2-classify", {
+    method: "POST",
+    body: formData,
+  })
+.then(response => response.json())
+.then(json => {
+ console.log (json);
+      if (json.error) {
+        document.getElementById("hpe_model").innerHTML = "<h3>" + "Class Not Found" + "</h3>";
+      } else {
+        document.getElementById("hpe_model").innerHTML = "<h3 id='imgClass' style='text-align:center'>  " + json.predicted +"</h3>";
+      }
+   });
+
+};
+</script>
+
+<h2 style="font-size:200%;"  align = 'center'> Context </h2>
+
+<p>There has been significant progress on pose estimation and increasing interests on pose tracking in recent years. At the same time, the overall algorithm and system complexity increases as well, making the algorithm analysis and comparison more difficult. This work provides simple and effective baseline methods.</p>
+<p><strong>HPE Method: Simple Baselines for Human Pose Estimation and Tracking, this work aims to ease complexity in algorithm and architetural problem by asking question how good could a simple method be?</strong></p>
+<p><strong><code>Feature Extraction</code></strong></p>
+<p>Feature extraction in Machine Leaning refers to the creation of derived values from raw data (such as an image or video in our case), that can be used as input to a learning algorithm. Features can either be explicit or implicit. <code>Explicit features</code> include <strong>conventional Computer Vision based features like Histogram of Oriented Gradients (HoG) and Scale Invariant Feature Transform (SIFT).</strong> These features are calculated explicitly before feeding the input to the following learning algorithm.</p>
+<p align = 'center'>
+    <img src = "images/sift.png" alt="SIFT" />
+</p>
+
+<div class="highlight"><pre><span></span><span class="err">    Left : Image along with corresponding color gradients, Right : Image with SIFT features</span>
+</pre></div>
+
+
+<p><code>Implicit features</code> refers to deep learning based feature maps like outputs from complex Deep Convolutional Neural Networks (CNNs). These feature maps are never created explicitly, but are a part of a complete pipeline trained end-to-end.</p>
+<p align = 'center'>
+    <img src = "images/resnet50.png" alt="ResNet50" />
+</p>
+
+<p><strong><code>ResNet is the most common backbone network for image feature extraction. Our method (Simple Baselines for Human Pose Estimation and Tracking) simply adds a few deconvolutional layers over the last convolution stage in the ResNet, called C5.They adopted this structure because it is arguably the simplest to generate heatmaps from deep and low resolution features and also adopted in the state-of-the-art Mask R-CNN.</code></strong></p>
+<p align = 'center'>
+    <img src = "images/simple_pose.png" alt="Pose-Estimation-Using-a-Deconvolution-Head-Network" />
+</p>
+
+<ul>
+<li><code>HPE Methods are categorised into 4 Methods:</code></li>
+</ul>
+<p><strong>1.Generative and Discriminative (3D Single Person)</strong></p>
+<ul>
+<li><code>The main difference between generative and discriminative methods is whether a method uses human body models or not.</code></li>
+</ul>
+<p><strong>2. Top Down and Bottom Up (Multi-Person)</strong></p>
+<ul>
+<li><code>The bottom-up approach first finds the keypoints and then maps them to different people in the image, while the top-down approach first uses a mechanism to detect people in an image, put a bounding box area around each person instance and then estimate keypoint configurations within the bounding boxes.</code></li>
+</ul>
+<p><strong>3. Regression and Detection Based (Single Person)</strong></p>
+<ul>
+<li><code>Regression - directly mapping from input images to body joint points and Detection - generating intermediate image patches or heatmaps of join-locations</code></li>
+</ul>
+<p><strong>4. One-Stage and Multi-Stage</strong></p>
+<ul>
+<li><code>One-stage : end-to-end training and Multi-stage : stage-by-stage training</code></li>
+</ul>
+<h2 style="font-size:200%;"  align = 'center'> Content </h2>
+
+<p><strong><code>Here we will be using the Bottom Up Approach, i.e. we will be detecting the body parts (joints, limbs, or small template patches) and then joining them to create our human body.</code></strong></p>
+<p>Now,we will make our hands little dirty!!😜 I will be using <a href="https://colab.research.google.com/">Google Colab</a> for running everything.</p>
+<ol>
+<li>Firstly, will start by cloning the <a href="https://github.com/microsoft/human-pose-estimation.pytorch">human-pose-estimation.pytorch</a> repository</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="err">!</span> <span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">microsoft</span><span class="o">/</span><span class="n">human</span><span class="o">-</span><span class="n">pose</span><span class="o">-</span><span class="n">estimation</span><span class="o">.</span><span class="n">pytorch</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="n">human</span><span class="o">-</span><span class="n">pose</span><span class="o">-</span><span class="n">estimation</span><span class="o">.</span><span class="n">pytorch</span> <span class="o">&amp;&amp;</span> \
+<span class="n">git</span> <span class="n">checkout</span> <span class="mi">18</span><span class="n">f1d0fa5b5db7fe08de640610f3fdbdbed8fb2f</span>
+</pre></div>
+
+
+<ol>
+<li>Add it to the <strong>sys.path</strong> so colab knows where the library is</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="k">if</span> <span class="s2">&quot;/content/human-pose-estimation.pytorch/lib/&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+  <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;/content/human-pose-estimation.pytorch/lib/&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<ol>
+<li>Import all necessary Libraries:</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.onnx</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">torchvision.transforms</span> <span class="k">as</span> <span class="nn">T</span>
+<span class="kn">import</span> <span class="nn">torch.backends.cudnn</span> <span class="k">as</span> <span class="nn">cudnn</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+</pre></div>
+
+
+<p>Here, we are using the ResNet50 model trained on 256x256 images of the <a href="http://human-pose.mpi-inf.mpg.de/">MPII Dataset</a>, it has 16 human body points. All of the MPII models can be found here <a href="https://drive.google.com/drive/folders/1g_6Hv33FG6rYRVLXx1SZaaHj871THrRW">Pre-trained-pose_mpii-models-Google Drive</a></p>
+<div class="highlight"><pre><span></span><span class="c1">##Downloading the pose_resnet_50_256x256.pth.tar model:</span>
+<span class="err">!</span> <span class="n">gdown</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">drive</span><span class="o">.</span><span class="n">google</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">uc</span><span class="err">?</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="n">V2AaVpDSn</span><span class="o">-</span><span class="n">eS7jrFScHLJ</span><span class="o">-</span><span class="n">wvTFuQ0</span><span class="o">-</span><span class="n">Dc</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1">##Import models and config files:</span>
+<span class="kn">import</span> <span class="nn">models</span>
+<span class="kn">from</span> <span class="nn">core.config</span> <span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span> <span class="nn">core.config</span> <span class="kn">import</span> <span class="n">update_config</span>
+<span class="kn">from</span> <span class="nn">core.config</span> <span class="kn">import</span> <span class="n">update_dir</span>
+<span class="kn">from</span> <span class="nn">core.config</span> <span class="kn">import</span> <span class="n">get_model_name</span>
+
+<span class="c1">## Assigning the CONFIG_FILE and MODEL_PATH variables:</span>
+<span class="c1">### The corresponding config file is taken from experiments folder:</span>
+<span class="n">CONFIG_FILE</span> <span class="o">=</span> <span class="s1">&#39;/content/human-pose-estimation.pytorch/experiments/mpii/resnet50/256x256_d256x3_adam_lr1e-3.yaml&#39;</span>
+<span class="n">MODEL_PATH</span> <span class="o">=</span> <span class="s1">&#39;/content/pose_resnet_50_256x256.pth.tar&#39;</span>
+
+<span class="c1">##update the config file:</span>
+<span class="n">update_config</span><span class="p">(</span><span class="n">CONFIG_FILE</span><span class="p">)</span>
+<span class="n">config</span><span class="o">.</span><span class="n">GPUS</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># we are running on CPU</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1">## Load the model:</span>
+<span class="n">model</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s1">&#39;models.&#39;</span><span class="o">+</span><span class="n">config</span><span class="o">.</span><span class="n">MODEL</span><span class="o">.</span><span class="n">NAME</span><span class="o">+</span><span class="s1">&#39;.get_pose_net&#39;</span><span class="p">)(</span><span class="n">config</span><span class="p">,</span> <span class="n">is_train</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">MODEL_PATH</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">)))</span>
+</pre></div>
+
+
+<p>We’ll be now using this guy’s image to detect pose. I wonder who this might be 🤔
+<p align = 'center'>
+    <img src = "images/VJ.png" alt="this is me!!😃" />
+</p></p>
+<p>Time to finally run the model on the image ! (ofcourse doing some image transformations first), you’ll notice something called JOINTS in below code, we’ll use those later ! they are from the MPII dataset, and our model will output those 16 human point Joints.</p>
+<div class="highlight"><pre><span></span><span class="n">transform</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+                       <span class="n">T</span><span class="o">.</span><span class="n">Resize</span><span class="p">((</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">)),</span>
+                       <span class="n">T</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+                       <span class="n">T</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="p">[</span><span class="mf">0.485</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.406</span><span class="p">],</span><span class="n">std</span><span class="o">=</span><span class="p">[</span><span class="mf">0.229</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">])</span>
+                       <span class="p">])</span>
+
+<span class="n">tr_img</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+<span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">tr_img</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">_</span><span class="p">,</span> <span class="n">OUT_HEIGHT</span><span class="p">,</span> <span class="n">OUT_WIDTH</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;output shape: </span><span class="si">{</span><span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="c1"># helper function we will use later</span>
+<span class="n">get_detached</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+
+<span class="n">POSE_PAIRS</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">],[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">],[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">12</span><span class="p">],[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span>\
+          <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">13</span><span class="p">],[</span><span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">],[</span><span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">]]</span>
+
+<span class="n">get_keypoints</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">pose_layers</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">[</span><span class="n">cv2</span><span class="o">.</span><span class="n">minMaxLoc</span><span class="p">(</span><span class="n">pose_layer</span><span class="p">)</span> <span class="k">for</span> <span class="n">pose_layer</span> <span class="ow">in</span> <span class="n">pose_layers</span><span class="p">])</span>
+
+<span class="n">JOINTS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;0 - r ankle&#39;</span><span class="p">,</span> <span class="s1">&#39;1 - r knee&#39;</span><span class="p">,</span> <span class="s1">&#39;2 - r hip&#39;</span><span class="p">,</span> <span class="s1">&#39;3 - l hip&#39;</span><span class="p">,</span> <span class="s1">&#39;4 - l knee&#39;</span><span class="p">,</span> <span class="s1">&#39;5 - l ankle&#39;</span><span class="p">,</span> <span class="s1">&#39;6 - pelvis&#39;</span><span class="p">,</span> \ 
+<span class="s1">&#39;7 - thorax&#39;</span><span class="p">,</span> <span class="s1">&#39;8 - upper neck&#39;</span><span class="p">,</span> <span class="s1">&#39;9 - head top&#39;</span><span class="p">,</span> <span class="s1">&#39;10 - r wrist&#39;</span><span class="p">,</span> <span class="s1">&#39;11 - r elbow&#39;</span><span class="p">,</span> <span class="s1">&#39;12 - r shoulder&#39;</span><span class="p">,</span> \
+<span class="s1">&#39;13 - l shoulder&#39;</span><span class="p">,</span> <span class="s1">&#39;14 - l elbow&#39;</span><span class="p">,</span> <span class="s1">&#39;15 - l wrist&#39;</span><span class="p">]</span>
+
+<span class="n">JOINTS</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[0-9]+|-&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">joint</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">joint</span> <span class="ow">in</span> <span class="n">JOINTS</span><span class="p">]</span>
+</pre></div>
+
+
+<ul>
+<li><strong><code>Confidence Maps :</code></strong> <code>A common way of predicting joint locations is producing confidence maps for every joint. Confidence maps are probability distribution over the image, representing the confidence of the joint location at every pixel.</code></li>
+</ul>
+<p align = 'center'>
+    <img src = "images/confidence_maps.png" alt="Confidence Maps" />
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">pose_layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">get_detached</span><span class="p">(</span><span class="n">output</span><span class="p">)):</span>
+    <span class="c1"># print(pose_layer.shape)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s1"> - </span><span class="si">{</span><span class="n">JOINTS</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">OUT_WIDTH</span><span class="p">,</span> <span class="n">OUT_HEIGHT</span><span class="p">)),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;bicubic&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pose_layer</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;jet&#39;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;bicubic&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">OUT_WIDTH</span><span class="p">,</span> <span class="n">OUT_HEIGHT</span><span class="p">)),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;bicubic&#39;</span><span class="p">)</span>
+<span class="n">pose_layers</span> <span class="o">=</span> <span class="n">get_detached</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+<span class="n">pose_layers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">pose_layers</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="n">layer_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pose_layers</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">layer_sum</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;jet&#39;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;bicubic&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+
+<ul>
+<li><strong><code>That's Bottom Up HPE approach! we never detected a bounding box for the image body, just the 16 keypoints.</code></strong></li>
+</ul>
+<p align = 'center'>
+    <img src = "images/16_keypoints.png"alt="16 combined keypoints" />
+</p>
+
+<ul>
+<li><strong><code>Postprocessing :</code></strong> <code>A lot of algorithms, including both bottom up and top down approaches, do not have a relation constraint on the final output. To put it in layman terms, an algorithm predicting joint positions from an input image does not have any filter on rejecting/correcting unnatural human pose. This can sometimes lead to weird Human Pose Estimation.</code></li>
+</ul>
+<p>To cope with this, there exist a set of postprocessing algorithms, which rejects unnatural human poses. The output pose from any Pose Estimation pipeline is passed through a learning algorithm which scores every pose based on its likeliness. <strong>Poses that get scores lower than a threshold are ignored during the testing phase.</strong></p>
+<div class="highlight"><pre><span></span><span class="n">THRESHOLD</span> <span class="o">=</span> <span class="mf">0.6</span>
+<span class="n">OUT_SHAPE</span> <span class="o">=</span> <span class="p">(</span><span class="n">OUT_HEIGHT</span><span class="p">,</span> <span class="n">OUT_WIDTH</span><span class="p">)</span>
+<span class="n">image_p</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">IMAGE_FILE</span><span class="p">)</span>
+<span class="n">pose_layers</span> <span class="o">=</span> <span class="n">get_detached</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
+<span class="n">key_points</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">get_keypoints</span><span class="p">(</span><span class="n">pose_layers</span><span class="o">=</span><span class="n">pose_layers</span><span class="p">))</span>
+<span class="n">is_joint_plotted</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">JOINTS</span><span class="p">))]</span>
+<span class="k">for</span> <span class="n">pose_pair</span> <span class="ow">in</span> <span class="n">POSE_PAIRS</span><span class="p">:</span>
+    <span class="n">from_j</span><span class="p">,</span> <span class="n">to_j</span> <span class="o">=</span> <span class="n">pose_pair</span>
+
+    <span class="n">from_thr</span><span class="p">,</span> <span class="p">(</span><span class="n">from_x_j</span><span class="p">,</span> <span class="n">from_y_j</span><span class="p">)</span> <span class="o">=</span> <span class="n">key_points</span><span class="p">[</span><span class="n">from_j</span><span class="p">]</span>
+    <span class="n">to_thr</span><span class="p">,</span> <span class="p">(</span><span class="n">to_x_j</span><span class="p">,</span> <span class="n">to_y_j</span><span class="p">)</span> <span class="o">=</span> <span class="n">key_points</span><span class="p">[</span><span class="n">to_j</span><span class="p">]</span>
+
+    <span class="n">IMG_HEIGHT</span><span class="p">,</span> <span class="n">IMG_WIDTH</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">image_p</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">from_x_j</span><span class="p">,</span> <span class="n">to_x_j</span> <span class="o">=</span> <span class="n">from_x_j</span> <span class="o">*</span> <span class="n">IMG_WIDTH</span> <span class="o">/</span> <span class="n">OUT_SHAPE</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">to_x_j</span> <span class="o">*</span> <span class="n">IMG_WIDTH</span> <span class="o">/</span> <span class="n">OUT_SHAPE</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">from_y_j</span><span class="p">,</span> <span class="n">to_y_j</span> <span class="o">=</span> <span class="n">from_y_j</span> <span class="o">*</span> <span class="n">IMG_HEIGHT</span> <span class="o">/</span> <span class="n">OUT_SHAPE</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">to_y_j</span> <span class="o">*</span> <span class="n">IMG_HEIGHT</span> <span class="o">/</span> <span class="n">OUT_SHAPE</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">from_x_j</span><span class="p">,</span> <span class="n">to_x_j</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">from_x_j</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">to_x_j</span><span class="p">)</span>
+    <span class="n">from_y_j</span><span class="p">,</span> <span class="n">to_y_j</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">from_y_j</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">to_y_j</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">from_thr</span> <span class="o">&gt;</span> <span class="n">THRESHOLD</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_joint_plotted</span><span class="p">[</span><span class="n">from_j</span><span class="p">]:</span>
+        <span class="c1"># this is a joint</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">ellipse</span><span class="p">(</span><span class="n">image_p</span><span class="p">,</span> <span class="p">(</span><span class="n">from_x_j</span><span class="p">,</span> <span class="n">from_y_j</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FILLED</span><span class="p">)</span>
+        <span class="n">is_joint_plotted</span><span class="p">[</span><span class="n">from_j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="n">to_thr</span> <span class="o">&gt;</span> <span class="n">THRESHOLD</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_joint_plotted</span><span class="p">[</span><span class="n">to_j</span><span class="p">]:</span>
+        <span class="c1"># this is a joint</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">ellipse</span><span class="p">(</span><span class="n">image_p</span><span class="p">,</span> <span class="p">(</span><span class="n">to_x_j</span><span class="p">,</span> <span class="n">to_y_j</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FILLED</span><span class="p">)</span>
+        <span class="n">is_joint_plotted</span><span class="p">[</span><span class="n">to_j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="n">from_thr</span> <span class="o">&gt;</span> <span class="n">THRESHOLD</span> <span class="ow">and</span> <span class="n">to_thr</span> <span class="o">&gt;</span> <span class="n">THRESHOLD</span><span class="p">:</span>
+        <span class="c1"># this is a joint connection, plot a line</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">image_p</span><span class="p">,</span> <span class="p">(</span><span class="n">from_x_j</span><span class="p">,</span> <span class="n">from_y_j</span><span class="p">),</span> <span class="p">(</span><span class="n">to_x_j</span><span class="p">,</span> <span class="n">to_y_j</span><span class="p">),</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">74</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">image_p</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_RGB2BGR</span><span class="p">))</span>
+</pre></div>
+
+
+<p align = 'center'>
+    <img src = "images/VJ_joints.png" alt="Image_with_joints" />
+</p>
+
+<p>It got all the 16 points ! 😲 (you can reduce the THRESHOLD if it didn’t)</p>
+<p><strong>Pose estimation can be classified into Single-person and Multi-person pose estimation.Single-person pose estimation (SPPE) is the easier of the two, with the guarantee of only one person present in the frame. On the other hand, Multi-person pose estimation (MPPE) needs to handle the additional problem of inter-person occlusion. Initial approaches in pose estimation were mostly focused on SPPE, however with the availability of huge multi-person datasets, the MPPE problem has lately been getting increased attention.we can use a hourglass model kind of architecture, or maybe something like YOLO does for creating different resolution(scales) representations of the image, that could help for Multi-person pose estimation in the Image.</strong></p>
+<h2  style="font-size:200%;" align='center'> ONNX Model </h2>
+
+<p><code>ONNX is an open format built to represent machine learning models. ONNX defines a common set of operators - the building blocks of machine learning and deep learning models - and a common file format to enable AI developers to use models with a variety of frameworks, tools, runtimes, and compilers.</code></p>
+<ul>
+<li>With ONNX, AI developers can more easily move models between state-of-the-art tools and choose the combination that is best for them. ONNX is developed and supported by a community of partners such as Microsoft, Facebook and AWS.</li>
+</ul>
+<p align = 'center'>
+    <img src = "images/onnx.png" alt="ONNX" />
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">##Install onnx and onnxruntime</span>
+<span class="err">!</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">onnx</span> <span class="n">onnxruntime</span>
+
+<span class="kn">import</span> <span class="nn">torch.onnx</span>
+
+<span class="k">def</span> <span class="nf">print_size_of_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="s2">&quot;temp.p&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Size (MB):&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="s2">&quot;temp.p&quot;</span><span class="p">)</span><span class="o">/</span><span class="mf">1e6</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;temp.p&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">print_size_of_onnx_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="n">onnx</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;temp.onnx&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Size (MB):&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="s2">&quot;temp.onnx&quot;</span><span class="p">)</span><span class="o">/</span><span class="mf">1e6</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;temp.onnx&#39;</span><span class="p">)</span>
+
+<span class="c1">##PyTorch model size:</span>
+<span class="n">print_size_of_model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+
+
+<p><strong>OUTPUT: Size (MB): 136.330065</strong></p>
+<ul>
+<li>With onnxruntime we can do only inferencing, but with tensorflow.js can do both training and inferencing in the browser.</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="c1"># Input to the model</span>
+<span class="n">torch_model</span> <span class="o">=</span> <span class="n">new_model</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">torch_out</span> <span class="o">=</span> <span class="n">torch_model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># Export the model</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">onnx</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">torch_model</span><span class="p">,</span>               <span class="c1"># model being run</span>
+                  <span class="n">x</span><span class="p">,</span>                         <span class="c1"># model input (or a tuple for multiple inputs)</span>
+                  <span class="s2">&quot;simple_pose_estimation.onnx&quot;</span><span class="p">,</span>   <span class="c1"># where to save the model (can be a file or file-like object)</span>
+                  <span class="n">export_params</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>        <span class="c1"># store the trained parameter weights inside the model file</span>
+                  <span class="n">opset_version</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>          <span class="c1"># the ONNX version to export the model to</span>
+                  <span class="n">do_constant_folding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># whether to execute constant folding for optimization</span>
+                  <span class="n">input_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">],</span>   <span class="c1"># the model&#39;s input names</span>
+                  <span class="n">output_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">],</span> <span class="c1"># the model&#39;s output names</span>
+                  <span class="n">dynamic_axes</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;input&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="mi">0</span> <span class="p">:</span> <span class="s1">&#39;batch_size&#39;</span><span class="p">},</span>    <span class="c1"># variable lenght axes</span>
+                                <span class="s1">&#39;output&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="mi">0</span> <span class="p">:</span> <span class="s1">&#39;batch_size&#39;</span><span class="p">}})</span>
+
+
+<span class="n">onnx_model</span> <span class="o">=</span> <span class="n">onnx</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;simple_pose_estimation.onnx&quot;</span><span class="p">)</span>
+<span class="n">onnx</span><span class="o">.</span><span class="n">checker</span><span class="o">.</span><span class="n">check_model</span><span class="p">(</span><span class="n">onnx_model</span><span class="p">)</span>
+
+<span class="n">print_size_of_onnx_model</span><span class="p">(</span><span class="n">onnx_model</span><span class="p">)</span>
+</pre></div>
+
+
+<p><strong>OUTPUT : Size (MB): 135.910897</strong></p>
+<p>Now we’ve successfully converted our model to ONNX</p>
+<h2  style="font-size:200%;" align='center'> Quantization </h2>
+
+<ul>
+<li>
+<p>Reducing network size by means of compression, encoding and so on. Quantization is one of the most widely adopted compression methods.<br></p>
+</li>
+<li>
+<p><strong><code>Quantization itself, conceptly, converts floating-point arithmetic of neural networks into fixed-point, and makes real time inference possible on mobile phones as well as benefits cloud applications.</code></strong></p>
+</li>
+</ul>
+<p align = 'center'>
+    <img src = "images/quant.png" alt="Quantization" />
+</p>
+
+<p><em>Quantization process can be divided into two parts:</em></p>
+<p><strong><code>1.Converting model from FP32 to INT8, and</code></strong></p>
+<p><strong><code>2.Inferencing with INT8.</code></strong></p>
+<p>Training with Quantization:</p>
+<div class="highlight"><pre><span></span>    <span class="n">learn</span> <span class="n">ranges</span> <span class="n">during</span> <span class="n">training</span>
+
+    <span class="k">forward</span> <span class="n">pass</span> <span class="o">-</span> <span class="n">quantized</span> <span class="k">values</span>
+
+    <span class="k">backward</span> <span class="n">pass</span> <span class="o">-</span> <span class="nb">float</span> <span class="k">values</span>
+</pre></div>
+
+
+<p><strong>A question you might have in your mind is, why not use the PyTorch’s Quantization ?</strong></p>
+<p><code>The models we have right now cannot be quantized, only a few very special models can be like BERT, LSTM, or else we have to modify our model and add some special layers.</code></p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">onnx</span>
+<span class="kn">from</span> <span class="nn">onnxruntime.quantization</span> <span class="kn">import</span> <span class="n">quantize</span>
+<span class="kn">from</span> <span class="nn">onnxruntime.quantization</span> <span class="kn">import</span> <span class="n">QuantizationMode</span>
+
+<span class="n">quantized_model</span> <span class="o">=</span> <span class="n">quantize</span><span class="p">(</span><span class="n">onnx_model</span><span class="p">,</span> <span class="n">quantization_mode</span><span class="o">=</span><span class="n">QuantizationMode</span><span class="o">.</span><span class="n">IntegerOps</span><span class="p">,</span> <span class="n">static</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">onnx</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">quantized_model</span><span class="p">,</span> <span class="s1">&#39;simple_pose_estimation_quantized.onnx&#39;</span><span class="p">)</span>
+
+<span class="n">print_size_of_onnx_model</span><span class="p">(</span><span class="n">quantized_model</span><span class="p">)</span>
+</pre></div>
+
+
+<p><strong>OUTPUT: Size (MB): 65.620732</strong></p>
+<p><code>Did you see that ? the model is half the size now ! although this comes with a caveat</code>⚠️ <strong>that the accuracy is reduced.</strong></p>
+<h3>Running the model on ONNX Runtime:</h3>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">onnxruntime</span>
+
+<span class="n">ort_session</span> <span class="o">=</span> <span class="n">onnxruntime</span><span class="o">.</span><span class="n">InferenceSession</span><span class="p">(</span><span class="s2">&quot;simple_pose_estimation_quantized.onnx&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">to_numpy</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tensor</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">if</span> <span class="n">tensor</span><span class="o">.</span><span class="n">requires_grad</span> <span class="k">else</span> <span class="n">tensor</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+<span class="c1"># compute ONNX Runtime output prediction</span>
+<span class="n">ort_inputs</span> <span class="o">=</span> <span class="p">{</span><span class="n">ort_session</span><span class="o">.</span><span class="n">get_inputs</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">to_numpy</span><span class="p">(</span><span class="n">tr_img</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))}</span>
+<span class="n">ort_outs</span> <span class="o">=</span> <span class="n">ort_session</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">ort_inputs</span><span class="p">)</span>
+<span class="n">ort_outs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ort_outs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># to get 16x64x64 output</span>
+</pre></div>
+
+
+<p align = 'center'>
+    <img src = "images/ONNX_Quant_result.png" alt="ONNX_Quant_result.png" />
+</p>
+
+<ul>
+<li><strong>Look at the size (65.6 MB)! its teeny-tiny for cpu, for my current deployment i was using torch-1.6.0 and torchvision-0.7.0 which took over 500MB uncompressed. something i can’t afford in AWS Lambda free tier. Now that i have the ONNX model and a really small runtime, everything will fit in a single free Lambda runtime and independent upon PyTorch libraries !!</strong></li>
+</ul>
+<p><strong>References:</strong></p>
+<p>https://pytorch.org/tutorials/advanced/super_resolution_with_onnxruntime.html</p>
+<p>https://satyajitghana.medium.com/human-pose-estimation-and-quantization-of-pytorch-to-onnx-models-a-detailed-guide-b9c91ddc0d9f</p>
+<p><em>If you have any doubts in the article, feel free to comment on your queries. I will be more than happy to help. I am also open to suggestions and feedbacks.Happy learning!!!</em></p>
+<div id="disqus_thread"></div>
+
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+
+    var disqus_config = function () {
+    this.page.url = 'www.vijayprakashk.com/deploying-pretrained-mobilenet-v2-model-over-aws-using-serverless-open-source-framework.html';  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE1; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://vijayprakashk.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div class="highlight"><pre><span></span>
+</pre></div>
+
+</article>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div id="sidebar">
+
+            <!-- Avatar -->
+
+            <!-- Logo -->
+            <h1 id="logo"><img id="avatar" alt="Avatar" src="https://user-images.githubusercontent.com/42317258/91530727-3c21cb00-e929-11ea-9691-21088dd85801.png"/><a href="./">VIJAY PRAKASH</a></h1>
+
+            <!-- Nav -->
+            <nav id="nav">
+                <ul>
+                    <li class="current"><a href="./category/eva.html">EVA</a></li>
+                    <li><a href="./pages/about-me.html">About ME</a></li>
+                </ul>
+            </nav>
+
+            <!-- Search -->
+            <!--
+            <section class="box search">
+                <form method="post" action="#">
+                    <input type="text" class="text" name="search" placeholder="Search" />
+                </form>
+            </section>
+            -->
+            <!-- Tags -->
+            <section class="box text-style1">
+                <div class="inner">
+                    <header>
+                        <h2>Tags:</h2>
+                    </header>
+                        <a class="tag-4" href="./tag/mobilenet-v2.html">mobilenet v2</a>
+                        <a class="tag-4" href="./tag/quantization.html">Quantization</a>
+                        <a class="tag-4" href="./tag/imagenet.html">Imagenet</a>
+                        <a class="tag-4" href="./tag/classification.html">classification</a>
+                        <a class="tag-4" href="./tag/hpe.html">HPE</a>
+                        <a class="tag-4" href="./tag/onnx.html">ONNX</a>
+                        <a class="tag-4" href="./tag/aws-lambda.html">Aws lambda</a>
+                </div>
+            </section>
+
+            <!-- Recent Posts -->
+            <!--
+            <section class="box recent-posts">
+                <header>
+                    <h2>Recent Posts</h2>
+                </header>
+                <ul>
+                    <li><a href="#">Lorem ipsum dolor</a></li>
+                    <li><a href="#">Feugiat nisl aliquam</a></li>
+                    <li><a href="#">Sed dolore magna</a></li>
+                    <li><a href="#">Malesuada commodo</a></li>
+                    <li><a href="#">Ipsum metus nullam</a></li>
+                </ul>
+            </section>
+            -->
+
+            <!-- Recent Comments -->
+            <!--
+            <section class="box recent-comments">
+                <header>
+                    <h2>Recent Comments</h2>
+                </header>
+                <ul>
+                    <li>case on <a href="#">Lorem ipsum dolor</a></li>
+                    <li>molly on <a href="#">Sed dolore magna</a></li>
+                    <li>case on <a href="#">Sed dolore magna</a></li>
+                </ul>
+            </section>
+            -->
+
+            <!-- Calendar -->
+            <!--
+            <section class="box calendar">
+                <div class="inner">
+                    <table>
+                        <caption>August 2020</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col" title="Monday">M</th>
+                                <th scope="col" title="Tuesday">T</th>
+                                <th scope="col" title="Wednesday">W</th>
+                                <th scope="col" title="Thursday">T</th>
+                                <th scope="col" title="Friday">F</th>
+                                <th scope="col" title="Saturday">S</th>
+                                <th scope="col" title="Sunday">S</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="4" class="pad"><span>&nbsp;</span></td>
+                                <td><span>1</span></td>
+                                <td><span>2</span></td>
+                                <td><span>3</span></td>
+                            </tr>
+                            <tr>
+                                <td><span>4</span></td>
+                                <td><span>5</span></td>
+                                <td><a href="#">6</a></td>
+                                <td><span>7</span></td>
+                                <td><span>8</span></td>
+                                <td><span>9</span></td>
+                                <td><a href="#">10</a></td>
+                            </tr>
+                            <tr>
+                                <td><span>11</span></td>
+                                <td><span>12</span></td>
+                                <td><span>13</span></td>
+                                <td><span>14</span></td>
+                                <td><span>15</span></td>
+                                <td><span>16</span></td>
+                                <td><span>17</span></td>
+                            </tr>
+                            <tr>
+                                <td><span>18</span></td>
+                                <td><span>19</span></td>
+                                <td><span>20</span></td>
+                                <td><span>21</span></td>
+                                <td><span>22</span></td>
+                                <td><a href="#">23</a></td>
+                                <td><span>24</span></td>
+                            </tr>
+                            <tr>
+                                <td><a href="#">25</a></td>
+                                <td><span>26</span></td>
+                                <td><span>27</span></td>
+                                <td><span>28</span></td>
+				<td><span>29</span></td>
+				<td class="today"><a href="#">30</a></td>
+                                <td class="pad" colspan="3"><span>&nbsp;</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            -->
+
+            <!-- Blogroll Links -->
+            <section class="box blogroll">
+                <header>
+                    <h2>Links</h2>
+                </header>
+                <ul>
+                    <li><a href="https://theschoolof.ai/">The School of AI</a></li>
+                    <li><a href="https://github.com/VijayPrakashReddy-k/Extensive-Vision-AI/tree/master/Phase%202">Code reference</a></li>
+                </ul>
+            </section>
+
+            <!-- Social Links -->
+            <section class="box social-links">
+                <header>
+                    <h2>Social</h2>
+                </header>
+                <ul>
+
+                    <li><i class="fa fa-github-square"></i> <a href="https://github.com/VijayPrakashReddy-k">github</a></li>
+                    <li><i class="fa fa-twitter-square"></i> <a href="https://twitter.com/K_VijayPrakash">twitter</a></li>
+                    <li><i class="fa fa-linkedin-square"></i> <a href="https://www.linkedin.com/in/vijayprakash-reddy-kovuru-ab3740166/">linkedin</a></li>
+                </ul>
+            </section>
+
+            <!-- Copyright -->
+            <ul id="copyright">
+                <li>&copy; </li>
+                <li>Powered by <a href="http://getpelican.com/">Pelican</a></li>
+                <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+            </ul>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="./theme/assets/js/jquery.min.js"></script>
+        <script src="./theme/assets/js/skel.min.js"></script>
+        <script src="./theme/assets/js/util.js"></script>
+        <!--[if lte IE 8]><script src="./theme/assets/js/ie/respond.min.js"></script><![endif]-->
+        <script src="./theme/assets/js/main.js"></script>
+<script>
+$("article img").each(function() {
+  $(this).load(function() {
+    var imgWidth = $(this).width();
+    var imgHeight = $(this).height();
+    if (imgHeight > imgWidth) {
+      $(this).css({
+        "width": "60%",
+        "margin": "0 auto"
+      });
+    }
+    var imageCaption = $(this).attr("alt");
+    if (imageCaption != '') {
+      // display image caption on top of image
+      imgWidth = imgWidth - 5;
+      var positionTop = imgHeight - 26;
+      $("<span class='img-caption'>" + imageCaption + "</span>").css({
+          "top": positionTop + "px",
+          "width": imgWidth + "px"
+      }).insertAfter(this);
+    }
+  });
+  if (this.complete) $(this).trigger("load");
+});
+</script>
+
+	<div id="disqus_thread"></div>
+	<script>
+
+	/**
+	*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+	*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+
+	var disqus_config = function () {
+	this.page.url = 127.0.0.1:8000/deploying-pretrained-mobilenet-v2-model-over-aws-using-serverless-open-source-framework.html  // Replace PAGE_URL with your page's canonical URL variable
+	this.page.identifier = PAGE1; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+	};
+
+	(function() { // DON'T EDIT BELOW THIS LINE
+	var d = document, s = d.createElement('script');
+	s.src = 'https://vijayprakashk.disqus.com/embed.js';
+	s.setAttribute('data-timestamp', +new Date());
+	(d.head || d.body).appendChild(s);
+	})();
+	</script>
+	<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </body>
+</html>
