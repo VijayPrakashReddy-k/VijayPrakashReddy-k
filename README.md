@@ -1,4 +1,6 @@
-### Hi there 👋
+### Hi there <img src="https://github.com/VijayPrakashReddy-k/VijayPrakashReddy-k/blob/master/Images/wave.gif" width="25px">
+
+
 
 <!--
 **VijayPrakashReddy-k/VijayPrakashReddy-k** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
