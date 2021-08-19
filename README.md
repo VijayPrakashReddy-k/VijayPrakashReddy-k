@@ -7,8 +7,6 @@ I am currently working at [Marlabs](https://www.marlabs.com/) as a Software Engi
 
 My interests are in autonomous driving and computer vision with deep learning and NLP. I also like to follow latest research works happening in the Computer Vision and NLP domain.
 
-Check out my latest blogs here: [Computer Vision with Deep Learning Blogs](https://www.vijayprakashk.com)
-
 Besides work, I like Cricket 🏏, Tablea Tennis 🏓, cooking 🥘 , cycling 🚴‍♀️ , Movies 🎥.
 
 
@@ -18,6 +16,7 @@ Besides work, I like Cricket 🏏, Tablea Tennis 🏓, cooking 🥘 , cycling �
 <p>
   <a href="https://twitter.com/K_VijayPrakash" target="_blank"><img alt="Twitter" src="https://img.shields.io/badge/twitter-%231DA1F2.svg?&style=for-the-badge&logo=twitter&logoColor=white" /></a> 
   <a href="https://www.linkedin.com/in/vijayprakash-reddy-kovuru-ab3740166/" target="_blank"><img alt="LinkedIn" src="https://img.shields.io/badge/linkedin-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white" /></a>
+  <a href="https://www.vijayprakashk.com/" target="_blank"> <img alt="Blog" src="https://img.shields.io/badge/Blogger-FF5722?style=for-the-badge&logo=blogger&logoColor=white"/></a>
   <a href="mailto:kovuru.vijayprakash@gmail.com"> <img alt="Gmail" src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" />
      </a>
 </p>
@@ -46,6 +45,7 @@ const Vijay = {
 
 <a href="https://www.python.org" target="_blank"> <img src="https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white" alt="python" /> </a>
 <a href="https://pytorch.org/" target="_blank"> <img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white" /></a>
+<a href="https://aws.amazon.com/" target="_blank"> <img alt="AWS" src="https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white" /></a>
 <a href="https://www.docker.com/" target="_blank"> <img alt="Docker" src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"/></a>
   
 </p>
