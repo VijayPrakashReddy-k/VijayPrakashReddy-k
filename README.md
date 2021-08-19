@@ -21,3 +21,31 @@ Besides work, I like Cricket 🏏, Tablea Tennis 🏓, cooking 🥘 , cycling �
   <a href="mailto:kovuru.vijayprakash@gmail.com"> <img alt="Gmail" src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" />
      </a>
 </p>
+
+### <img src="https://media.giphy.com/media/VgCDAzcKvsR6OM0uWg/giphy.gif" width="50"> A little more about me...  
+
+```python
+const Vijay = {
+    pronouns: "He" | "Him",
+    code: ["Python", "Java", "Javascript"],
+    askMeAbout: ["ML", "Autonomous Cars", "Computer Vision", "Photography"],
+    technologies: {
+        databases: ["Mongo", "MySql", "Postgre"],
+        BI tools: ["Tableau", "Power BI"],
+        data warehouses : ["Snowflake"],
+        Cloud : ["AWS","Azure"],
+        misc: ["Pyspark","Kafka", "open-cv"]
+        },
+    funFact: "There are two ways to write error-free programs; only the third one works"
+};
+```
+
+<h3 align="left">Languages & Tools:</h3>
+
+<p align="left">
+
+<a href="https://www.python.org" target="_blank"> <img src="https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white" alt="python" /> </a>
+<a href="https://pytorch.org/" target="_blank"> <img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white" /></a>
+<a href="https://www.docker.com/" target="_blank"> <img alt="Docker" src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"/></a>
+  
+</p>
