@@ -7,7 +7,7 @@ I am currently working at [Marlabs](https://www.marlabs.com/) as a Software Engi
 
 My interests are in autonomous driving and computer vision with deep learning and NLP. I also like to follow latest research works happening in the Computer Vision and NLP domain.
 
-Besides work, I like Cricket 🏏, Tablea Tennis 🏓, cooking 🥘 , cycling 🚴‍♀️ , Movies 🎥.
+Besides work, I like Cricket 🏏, Table Tennis 🏓, cooking 🥘 , cycling 🚴‍♀️ , Movies 🎥.
 
 
 <img src="https://github.com/VijayPrakashReddy-k/VijayPrakashReddy-k/blob/master/Images/people.gif" width="60"> <em><b>I love connecting with different people</b> so if you want to say <b>hi, I'll be happy to connect with you and can reach me through any plotform below!</b> :)</em>
