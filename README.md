@@ -3,7 +3,7 @@
 <h3>I'm VijayPrakash! <img src="https://github.com/VijayPrakashReddy-k/VijayPrakashReddy-k/blob/master/Images/logo.gif" width="50"></h3>
 
 
-I am currently working at [Marlabs](https://www.marlabs.com/) as a Software Engineer in Analytics domain.
+I am currently doing my master's at the [University of Central Florida](https://www.ucf.edu/) in Computer Vision.
 
 My interests are in autonomous driving and computer vision with deep learning and NLP. I also like to follow latest research works happening in the Computer Vision and NLP domain.
 
